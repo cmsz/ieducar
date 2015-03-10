@@ -86,20 +86,20 @@ class EducacensoParser {
         		return $this->check_matricula($data);
         }
     }
-    
+
     protected function check_turma($d) {
         $logs = "";
-        $id_turma_inep = intval($d['codigo_inep_turma']);
+        $id_turma_inep = $d['codigo_inep_turma'];
         $tipo_atendimento = intval($d['tipo_atendimento']);
-        
+
         // Por enquanto, não tratamos turmas que não sejam padrão.
         if ($tipo_atendimento != 0) {
             $logs = "Turma $id_turma_inep não será importada (tipo: $tipo_atendimento)";
             return $logs;
-        } 
-        
+        }
+
         $id_turma = clsPmIeducarTurma::id_turma_inep($id_turma_inep);
-        
+
         if ($id_turma) {
             $logs .= "Turma $id_turma_inep encontrada. Não será atualizada.\n";
         } else {
@@ -405,52 +405,52 @@ class EducacensoParser {
         $escola_id = $escola->cadastra();
         $escola->cod_escola = $escola_id;
         $escola->vincula_educacenso($d['codigo_inep'], 'Importador');
-        
+
         $municipio = new clsMunicipio();
         $municipio = $municipio->by_id_IBGE($d['_municipio']);
-        
+
         foreach (array(1 => 'telefone', 2 => 'telefone_publico', 3 => 'telefone_outro', 4 => 'fax') as $t => $f) {
             if ((bool)$d['_ddd'] && (bool)$d[$f]) {
                 $telefone = new clsPessoaTelefone(
-                        $id_pessoa, 
-                        $t, 
-                        str_replace( "-", "", $d[$f]), 
-                        $d['_ddd'] 
+                        $id_pessoa,
+                        $t,
+                        str_replace( "-", "", $d[$f]),
+                        $d['_ddd']
                 );
                 $telefone->cadastra();
             }
         }
-        
-        $endereco = new clsEnderecoExterno( 
-                $id_pessoa, 
-                "1", 
-                'QDA', 
-                $d['endereco'], 
-                preg_replace( '/[^0-9]/', '', $d['endereco_numero']),  
+
+        $endereco = new clsEnderecoExterno(
+                $id_pessoa,
+                "1",
+                'QDA',
+                $d['endereco'],
+                preg_replace( '/[^0-9]/', '', $d['endereco_numero']),
                 null, // Letra é um campo text de length 1.
-                $d['complemento'], 
-                strlen($d['bairro']) > 40 ? substr($d['bairro'], 0, 40) : $d['bairro'], 
-                idFederal2int($d['cep']), 
-                $municipio->nome, 
-                $municipio->sigla_uf, 
-                false 
+                $d['complemento'],
+                strlen($d['bairro']) > 40 ? substr($d['bairro'], 0, 40) : $d['bairro'],
+                idFederal2int($d['cep']),
+                $municipio->nome,
+                $municipio->sigla_uf,
+                false
         );
         $endereco->cadastra();
-        
+
         //TODO: Cadastro de cursos.
         //$curso_escola = new clsPmieducarEscolaCurso( $cadastrou, $campo, null, $this->pessoa_logada, null, null, 1 );
         //$cadastrou_ = $curso_escola->cadastra();
-       
-    } 
+
+    }
 
     protected function date_db($date) {
         return implode('-', array_reverse(explode('/', $date)));
     }
-    
+
     protected function add_professor($d) {
-        $id_professor_inep = intval($d['codigo_inep_profissional']);
-        $id_escola = clsPmieducarEscola::id_escola_inep(intval($d['codigo_inep_escola']));
-        
+        $id_professor_inep = $d['codigo_inep_profissional'];
+        $id_escola = clsPmieducarEscola::id_escola_inep($d['codigo_inep_escola']);
+
         $municipio_nascimento = new clsMunicipio();
         $municipio_residencia = new clsMunicipio();
         try {
@@ -637,20 +637,20 @@ class EducacensoParser {
     }
 
     protected function add_turma($d) {
-        $id_turma_inep = intval($d['codigo_inep_turma']);
-        $id_escola_inep = intval($d['codigo_inep_escola']);
-        $id_etapa_ensino = intval($d['_etapa_ensino']);
-        
+        $id_turma_inep = $d['codigo_inep_turma'];
+        $id_escola_inep = $d['codigo_inep_escola'];
+        $id_etapa_ensino = $d['_etapa_ensino'];
+
         $id_escola = clsPmieducarEscola::id_escola_inep($id_escola_inep);
 
         $id_tipo_turma = $this->tipo_turma($d);
-        
+
         $id_curso = $this->curso($id_etapa_ensino, $id_escola);
-        $id_serie = $this->serie($id_etapa_ensino, $id_curso, $id_escola); 
-        
+        $id_serie = $this->serie($id_etapa_ensino, $id_curso, $id_escola);
+
         $hora_inicio = sprintf("%02d:%02d:00", intval($d['horario_inicial_hora']), intval($d['horario_inicial_minuto']));
         $hora_fim = sprintf("%02d:%02d:00", intval($d['horario_final_hora']), intval($d['horario_final_minuto']));
-        
+
         $turma = new clsPmieducarTurma();
         $turma->ref_cod_instituicao = $this->instituicao_id;
         $turma->ref_cod_instituicao_regente = $this->instituicao_id;

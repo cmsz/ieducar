@@ -2044,12 +2044,12 @@ and  e.cod_escola = t.ref_ref_cod_escola
 	        $db = new clsBanco();
 	        $db->Consulta(sprintf("INSERT INTO modules.educacenso_cod_turma " .
                   "(cod_turma, cod_turma_inep, fonte, created_at) VALUES " .
-                  "(%d, %d, '%s', NOW());", $this->cod_turma, $cod_inep, $fonte));
+                  "(%s, %s, '%s', NOW());", $this->cod_turma, $cod_inep, $fonte));
 	        return true;
 	    }
 	    return false;
 	}
-	
+
 	/**
 	 * Define quais campos da tabela serao selecionados na invocacao do metodo lista
 	 *
