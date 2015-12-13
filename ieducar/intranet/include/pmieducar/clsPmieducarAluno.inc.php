@@ -1132,12 +1132,12 @@ class clsPmieducarAluno
           $db = new clsBanco();
           $db->Consulta(sprintf("INSERT INTO modules.educacenso_cod_aluno " .
                   "(cod_aluno, cod_aluno_inep, fonte, created_at) VALUES " .
-                  "(%d, %d, '%s', NOW());", $this->cod_aluno, $cod_inep, $fonte));
+                  "(%s, %s, '%s', NOW());", $this->cod_aluno, $cod_inep, $fonte));
           return true;
       }
       return false;
   }
-  
+
   /**
    * Define quais campos da tabela serão selecionados no método Lista().
    */

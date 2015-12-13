@@ -1203,12 +1203,12 @@ class clsPmieducarServidor
           $db = new clsBanco();
           $db->Consulta(sprintf("INSERT INTO modules.educacenso_cod_docente " .
                   "(cod_servidor, cod_docente_inep, fonte, created_at) VALUES " .
-                  "(%d, %d, '%s', NOW());", $this->cod_servidor, $cod_inep, $fonte));
+                  "(%s, %s, '%s', NOW());", $this->cod_servidor, $cod_inep, $fonte));
           return true;
       }
       return false;
   }
-  
+
   /**
    * Define quais campos da tabela serão selecionados no método Lista().
    */
